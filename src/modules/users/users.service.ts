@@ -1,3 +1,4 @@
+import { Role } from "../../../generated/prisma/enums.js";
 import { prisma } from "../../config/db.js";
 import { AppError } from "../../utils/AppError.js";
 
@@ -60,6 +61,24 @@ export async function restoreUser(userId: string) {
   });
 }
 
-export async function updateUserRoleService(): Promise<void> {
-  // TODO
+export async function updateUserRoleService(userId: string, role: Role) {
+  const user = await prisma.user.findFirst({
+    where: { id: userId, deletedAt: null },
+    select: { id: true },
+  });
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  return prisma.user.update({
+    where: { id: userId },
+    data: { role },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+    },
+  });
 }

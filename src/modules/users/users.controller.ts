@@ -4,7 +4,9 @@ import {
   getDeletedUsers,
   restoreUser,
   softDeleteUser,
+  updateUserRoleService,
 } from "./users.service.js";
+import { updateUserRoleSchema } from "./users.schema.js";
 
 export async function deleteUser(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -52,5 +54,22 @@ export async function restoreDeletedUser(
 }
 
 export async function updateUserRole(req: Request, res: Response, next: NextFunction): Promise<void> {
-  // TODO
+  try {
+    const userId = req.params.id;
+    if (typeof userId !== "string") {
+      throw new AppError("User ID is required", 400);
+    }
+
+    const { role } = updateUserRoleSchema.parse(req.body);
+
+    const currentUserId = res.locals.user?.sub;
+    if (currentUserId === userId) {
+      throw new AppError("You cannot change your own role", 400);
+    }
+
+    const user = await updateUserRoleService(userId, role);
+    res.status(200).json({ message: "User role updated successfully", user });
+  } catch (err) {
+    next(err);
+  }
 }

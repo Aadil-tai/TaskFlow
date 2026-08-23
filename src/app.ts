@@ -7,9 +7,16 @@ import { errorHandler } from "./middleware/errorHandler.js";
 
 export const port = Number(process.env.PORT) || 3000;
 
+const frontendUrl = process.env.FRONTEND_URL;
+
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: frontendUrl ? [frontendUrl] : true,
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 app.use(express.json());
 app.set("trust proxy", 1);
