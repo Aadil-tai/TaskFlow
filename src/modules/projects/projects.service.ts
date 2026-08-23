@@ -51,7 +51,24 @@ export async function getProjectsService(userId: string) {
 }
 
 export async function getProjectByIdService(projectId: string, userId: string) {
-  return getAccessibleProject(projectId, userId);
+  const project = await getAccessibleProject(projectId, userId);
+  const [totalTasks, todoTasks, inProgressTasks, completedTasks] = await Promise.all([
+    prisma.task.count({ where: { projectId, deletedAt: null } }),
+    prisma.task.count({ where: { projectId, deletedAt: null, status: "TODO" } }),
+    prisma.task.count({ where: { projectId, deletedAt: null, status: "IN_PROGRESS" } }),
+    prisma.task.count({ where: { projectId, deletedAt: null, status: "DONE" } }),
+  ]);
+
+  return {
+    ...project,
+    progress: {
+      totalTasks,
+      todoTasks,
+      inProgressTasks,
+      completedTasks,
+      progressPercentage: totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100),
+    },
+  };
 }
 
 export async function addProjectMemberService(projectId: string, memberId: string, userId: string) {

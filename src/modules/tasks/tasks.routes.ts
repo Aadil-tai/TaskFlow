@@ -14,9 +14,9 @@ const router = Router();
 
 router.post("/tasks", authenticate, requireRole("ADMIN"), createTask);
 router.get("/tasks", authenticate, getTasks);
-router.patch("/tasks/:id", authenticate, updateTask);
+router.patch("/tasks/:id", authenticate, requireRole("ADMIN"), updateTask);
 router.patch("/tasks/:id/status", authenticate, updateTaskStatus);
 router.get("/tasks/:id/deadline-history", authenticate, getTaskDeadlineHistory);
-router.delete("/tasks/:id", authenticate, softDeleteTask);
+router.delete("/tasks/:id", authenticate, requireRole("ADMIN"), softDeleteTask);
 
 export default router;
