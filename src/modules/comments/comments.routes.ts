@@ -28,6 +28,8 @@ const router = Router();
  *                 minLength: 1
  *                 maxLength: 5000
  *                 example: Looks great! Can we try a darker shade for the CTA button?
+ *         example:
+ *           content: Looks great! Can we try a darker shade for the CTA button?
  *     responses:
  *       201:
  *         description: Comment created with author details

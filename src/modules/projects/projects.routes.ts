@@ -30,6 +30,9 @@ const router = Router();
  *               description:
  *                 type: string
  *                 example: Revamp the marketing site with a new design system
+ *         example:
+ *           name: Website Redesign
+ *           description: Revamp the marketing site with a new design system
  *     responses:
  *       201:
  *         description: Project created
@@ -116,6 +119,8 @@ router.get("/projects/:id", authenticate, getProjectById);
  *                 type: string
  *                 format: uuid
  *                 example: 3f2504e0-4f89-11d3-9a0c-0305e82c3301
+ *         example:
+ *           userId: 3f2504e0-4f89-11d3-9a0c-0305e82c3301
  *     responses:
  *       201:
  *         description: Member added (idempotent)

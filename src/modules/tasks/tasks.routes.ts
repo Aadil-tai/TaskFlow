@@ -47,6 +47,13 @@ const router = Router();
  *                 type: string
  *                 format: uuid
  *                 example: 3f2504e0-4f89-11d3-9a0c-0305e82c3301
+ *         example:
+ *           projectId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+ *           title: Design homepage hero section
+ *           description: Create two hero variants for A/B testing, desktop and mobile
+ *           priority: HIGH
+ *           deadline: '2026-09-15T18:00:00.000Z'
+ *           assignedTo: 3f2504e0-4f89-11d3-9a0c-0305e82c3301
  *                 description: Must be an active project member or the project creator
  *     responses:
  *       201:
@@ -125,6 +132,11 @@ router.get("/tasks", authenticate, getTasks);
  *                 format: uuid
  *                 nullable: true
  *                 example: 3f2504e0-4f89-11d3-9a0c-0305e82c3301
+ *         example:
+ *           title: Design homepage hero section v2
+ *           description: Updated after client feedback on copy
+ *           priority: MEDIUM
+ *           deadline: '2026-09-20T18:00:00.000Z'
  *     responses:
  *       200:
  *         description: Updated task
@@ -164,6 +176,8 @@ router.patch("/tasks/:id", authenticate, requireRole("ADMIN"), updateTask);
  *               status:
  *                 $ref: '#/components/schemas/Status'
  *                 example: IN_PROGRESS
+ *         example:
+ *           status: IN_PROGRESS
  *     responses:
  *       200:
  *         description: Status updated

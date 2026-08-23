@@ -30,6 +30,10 @@ const router = Router();
  *                 type: string
  *                 minLength: 6
  *                 example: Passw0rd!123
+ *         example:
+ *           name: Ayesha Khan
+ *           email: ayesha@example.com
+ *           password: Passw0rd!123
  *     responses:
  *       201:
  *         description: User registered

@@ -32,6 +32,8 @@ const router = Router();
  *               role:
  *                 $ref: '#/components/schemas/Role'
  *                 example: ADMIN
+ *         example:
+ *           role: ADMIN
  *     responses:
  *       200:
  *         description: Role updated
