@@ -13,7 +13,7 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 app.get("/", (_req, res) => {
-	res.type("html").send(`TaskFlow app is running on port ${port}. <a href="http://localhost:${port}">Open TaskFlow</a>`);
+	res.type("html").send(`TaskFlow API is running on port ${port}. <a href="http://localhost:${port}/api">Open API</a>`);
 });
 app.use("/api", apiRouter);
 app.use(errorHandler);
