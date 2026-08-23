@@ -36,7 +36,7 @@ async function ensureTaskAccess(taskId: string, userId: string) {
       id: task.projectId,
       OR: [{ createdBy: userId }, { members: { some: { userId } } }],
     },
-    select: { id: true },
+    select: { id: true, createdBy: true },
   });
 
   if (!project) {
@@ -56,11 +56,29 @@ export async function createTaskService(input: CreateTaskInput, userId: string) 
         { members: { some: { userId } } },
       ],
     },
-    select: { id: true },
+    select: { id: true, createdBy: true },
   });
 
   if (!project) {
     throw new AppError("Project not found or access denied", 404);
+  }
+
+  if (input.assignedTo !== undefined) {
+    const assignee = await prisma.user.findFirst({
+      where: {
+        id: input.assignedTo,
+        deletedAt: null,
+        OR: [
+          { id: project.createdBy },
+          { memberships: { some: { projectId: input.projectId } } },
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (!assignee) {
+      throw new AppError("Assignee must be an active project member", 400);
+    }
   }
 
   return prisma.task.create({
@@ -102,11 +120,29 @@ export async function updateTaskService(taskId: string, input: UpdateTaskInput, 
       id: (await prisma.task.findUniqueOrThrow({ where: { id: taskId }, select: { projectId: true } })).projectId,
       OR: [{ createdBy: userId }, { members: { some: { userId } } }],
     },
-    select: { id: true },
+    select: { id: true, createdBy: true },
   });
 
   if (!access) {
     throw new AppError("Access denied", 403);
+  }
+
+  if (input.assignedTo !== undefined && input.assignedTo !== null) {
+    const assignee = await prisma.user.findFirst({
+      where: {
+        id: input.assignedTo,
+        deletedAt: null,
+        OR: [
+          { id: access.createdBy },
+          { memberships: { some: { projectId: task.projectId } } },
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (!assignee) {
+      throw new AppError("Assignee must be an active project member", 400);
+    }
   }
 
   const updateData = {
