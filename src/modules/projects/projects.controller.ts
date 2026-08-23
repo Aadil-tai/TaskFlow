@@ -29,14 +29,16 @@ export async function createProject(req: Request, res: Response, next: NextFunct
 
 export async function getProjects(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const projects = await getProjectsService(userId(res));
+    const role = res.locals.user?.role || "MEMBER";
+    const projects = await getProjectsService(userId(res), role);
     res.status(200).json({ projects });
   } catch (err) { next(err); }
 }
 
 export async function getProjectById(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const project = await getProjectByIdService(projectId(req), userId(res));
+    const role = res.locals.user?.role || "MEMBER";
+    const project = await getProjectByIdService(projectId(req), userId(res), role);
     res.status(200).json({ project });
   } catch (err) { next(err); }
 }

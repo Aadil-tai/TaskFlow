@@ -91,9 +91,12 @@ export async function createTaskService(input: CreateTaskInput, userId: string) 
   });
 }
 
-export async function getTasksService(userId: string, projectId?: string) {
+export async function getTasksService(userId: string, role: string = "MEMBER", projectId?: string) {
   return prisma.task.findMany({
-    where: {
+    where: role === "ADMIN" ? {
+      deletedAt: null,
+      ...(projectId ? { projectId } : {}),
+    } : {
       deletedAt: null,
       ...(projectId ? { projectId } : {}),
       project: {

@@ -40,7 +40,8 @@ export async function createTask(req: Request, res: Response, next: NextFunction
 export async function getTasks(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const projectId = typeof req.query.projectId === "string" ? req.query.projectId : undefined;
-    const tasks = await getTasksService(getUserId(res), projectId);
+    const role = res.locals.user?.role || "MEMBER";
+    const tasks = await getTasksService(getUserId(res), role, projectId);
     res.status(200).json({ tasks });
   } catch (err) { next(err); }
 }

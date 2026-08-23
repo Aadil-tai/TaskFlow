@@ -11,9 +11,12 @@ const projectSelect = {
   deletedAt: true,
 } as const;
 
-async function getAccessibleProject(projectId: string, userId: string) {
+async function getAccessibleProject(projectId: string, userId: string, role: string) {
   const project = await prisma.project.findFirst({
-    where: {
+    where: role === "ADMIN" ? {
+      id: projectId,
+      deletedAt: null,
+    } : {
       id: projectId,
       deletedAt: null,
       OR: [{ createdBy: userId }, { members: { some: { userId } } }],
@@ -39,9 +42,11 @@ export async function createProjectService(input: CreateProjectInput, userId: st
   });
 }
 
-export async function getProjectsService(userId: string) {
+export async function getProjectsService(userId: string, role: string = "MEMBER") {
   return prisma.project.findMany({
-    where: {
+    where: role === "ADMIN" ? {
+      deletedAt: null,
+    } : {
       deletedAt: null,
       OR: [{ createdBy: userId }, { members: { some: { userId } } }],
     },
@@ -50,8 +55,8 @@ export async function getProjectsService(userId: string) {
   });
 }
 
-export async function getProjectByIdService(projectId: string, userId: string) {
-  const project = await getAccessibleProject(projectId, userId);
+export async function getProjectByIdService(projectId: string, userId: string, role: string = "MEMBER") {
+  const project = await getAccessibleProject(projectId, userId, role);
   const [totalTasks, todoTasks, inProgressTasks, completedTasks] = await Promise.all([
     prisma.task.count({ where: { projectId, deletedAt: null } }),
     prisma.task.count({ where: { projectId, deletedAt: null, status: "TODO" } }),
