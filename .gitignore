@@ -4,6 +4,7 @@ node_modules
 .agents/
 .git.corrupt-20260823/
 PROJECT_GUIDE.md
+projectflow.md
 # Keep environment variables out of version control
 .env
 
