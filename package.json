@@ -7,6 +7,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec tsx src/server.ts",
+    "prestart": "npx prisma db push --accept-data-loss",
     "start": "tsx src/server.ts",
     "postinstall": "prisma generate",
     "seed:admin": "tsx src/scripts/seed-admin.ts"
