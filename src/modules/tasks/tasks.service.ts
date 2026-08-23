@@ -68,16 +68,12 @@ export async function createTaskService(input: CreateTaskInput, userId: string) 
       where: {
         id: input.assignedTo,
         deletedAt: null,
-        OR: [
-          { id: project.createdBy },
-          { memberships: { some: { projectId: input.projectId } } },
-        ],
       },
       select: { id: true },
     });
 
     if (!assignee) {
-      throw new AppError("Assignee must be an active project member", 400);
+      throw new AppError("Assignee must be an active user", 400);
     }
   }
 
@@ -132,16 +128,12 @@ export async function updateTaskService(taskId: string, input: UpdateTaskInput, 
       where: {
         id: input.assignedTo,
         deletedAt: null,
-        OR: [
-          { id: access.createdBy },
-          { memberships: { some: { projectId: task.projectId } } },
-        ],
       },
       select: { id: true },
     });
 
     if (!assignee) {
-      throw new AppError("Assignee must be an active project member", 400);
+      throw new AppError("Assignee must be an active user", 400);
     }
   }
 

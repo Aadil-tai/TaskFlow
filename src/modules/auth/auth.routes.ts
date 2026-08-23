@@ -1,53 +1,7 @@
 import { Router } from "express";
-import { login, refresh, register } from "./auth.controller.js";
-// import { authenticate } from "../../middleware/authenticate.js";
+import { login, refresh } from "./auth.controller.js";
 
 const router = Router();
-
-/**
- * @openapi
- * /auth/register:
- *   post:
- *     tags: [Auth]
- *     summary: Register a new user
- *     security: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [name, email, password]
- *             properties:
- *               name:
- *                 type: string
- *                 example: Ayesha Khan
- *               email:
- *                 type: string
- *                 format: email
- *                 example: ayesha@example.com
- *               password:
- *                 type: string
- *                 minLength: 6
- *                 example: Passw0rd!123
- *         example:
- *           name: Ayesha Khan
- *           email: ayesha@example.com
- *           password: Passw0rd!123
- *     responses:
- *       201:
- *         description: User registered
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message: { type: string }
- *                 user: { $ref: '#/components/schemas/User' }
- *       409:
- *         description: Email already registered
- */
-router.post("/auth/register", register);
 
 /**
  * @openapi

@@ -36,6 +36,7 @@ model User {
   email        String   @unique
   passwordHash String
   role         Role
+  avatarUrl    String?
   createdAt    DateTime @default(now())
   deletedAt    DateTime?
 

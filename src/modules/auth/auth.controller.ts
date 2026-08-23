@@ -1,26 +1,13 @@
 import type { NextFunction, Request, Response } from "express";
-import { loginSchema, registerSchema } from "./auth.schema.js";
-import { loginUser, registerUser } from "./auth.service.js";
+import { loginSchema } from "./auth.schema.js";
+import { loginUser } from "./auth.service.js";
+import { prisma } from "../../config/db.js";
 import {
   signRefreshToken,
   signToken,
   verifyRefreshToken,
 } from "../../utils/jwt.js";
 import { AppError } from "../../utils/AppError.js";
-
-export async function register(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try{
- const input = registerSchema.parse(req.body);
-    const user = await registerUser(input);
-
-    res.status(201).json({
-      message: "User registered successfully",
-      user,
-    });
-  }catch(err){
-    next(err)
-  }
-}
 
 export async function login(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -30,7 +17,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
       { sub: user.id, role: user.role },
       "15m",
     );
-    const refreshToken = signRefreshToken({ sub: user.id });
+    const refreshToken = signRefreshToken({ sub: user.id, role: user.role });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -58,8 +45,18 @@ export async function refresh(req: Request, res: Response, next: NextFunction): 
     }
 
     const payload = verifyRefreshToken<{ sub: string; role?: string }>(refreshToken);
+
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub },
+      select: { id: true, role: true, deletedAt: true },
+    });
+
+    if (!user || user.deletedAt !== null) {
+      throw new AppError("User not found or deactivated", 401);
+    }
+
     const accessToken = signToken(
-      { sub: payload.sub, ...(payload.role ? { role: payload.role } : {}) },
+      { sub: user.id, role: user.role },
       "15m",
     );
 

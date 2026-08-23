@@ -29,7 +29,7 @@ const router = Router();
  *               projectId:
  *                 type: string
  *                 format: uuid
- *                 example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+ *                 example: '7c9e6679-7425-40de-944b-e07fc1f90ae7'
  *               title:
  *                 type: string
  *                 example: Design homepage hero section
@@ -46,15 +46,14 @@ const router = Router();
  *               assignedTo:
  *                 type: string
  *                 format: uuid
- *                 example: 3f2504e0-4f89-11d3-9a0c-0305e82c3301
+ *                 example: '3f2504e0-4f89-11d3-9a0c-0305e82c3301'
  *         example:
- *           projectId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+ *           projectId: '7c9e6679-7425-40de-944b-e07fc1f90ae7'
  *           title: Design homepage hero section
  *           description: Create two hero variants for A/B testing, desktop and mobile
  *           priority: HIGH
  *           deadline: '2026-09-15T18:00:00.000Z'
- *           assignedTo: 3f2504e0-4f89-11d3-9a0c-0305e82c3301
- *                 description: Must be an active project member or the project creator
+ *           assignedTo: '3f2504e0-4f89-11d3-9a0c-0305e82c3301'
  *     responses:
  *       201:
  *         description: Task created
