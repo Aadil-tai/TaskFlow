@@ -11,3 +11,113 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Status {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+
+  projectsCreated Project[]       @relation("ProjectCreator")
+  memberships     ProjectMember[]
+  tasksAssigned   Task[]          @relation("TaskAssignee")
+  tasksCreated    Task[]          @relation("TaskCreator")
+  comments        TaskComment[]
+  deadlineChanges TaskDeadlineHistory[]
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdBy   String
+  creator     User     @relation("ProjectCreator", fields: [createdBy], references: [id])
+  members     ProjectMember[]
+  tasks       Task[]
+  createdAt   DateTime @default(now())
+  deletedAt   DateTime?
+
+  @@index([createdBy])
+}
+
+model ProjectMember {
+  id        String  @id @default(uuid())
+  projectId String
+  userId    String
+  project   Project @relation(fields: [projectId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@unique([projectId, userId])
+  @@index([userId])
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  projectId   String
+  title       String
+  description String?
+  priority    Priority
+  status      Status    @default(TODO)
+  deadline    DateTime
+  assignedTo  String?
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  deletedAt   DateTime?
+
+  project      Project               @relation(fields: [projectId], references: [id])
+  assignee     User?                 @relation("TaskAssignee", fields: [assignedTo], references: [id])
+  creator      User                  @relation("TaskCreator", fields: [createdBy], references: [id])
+  comments     TaskComment[]
+  deadlineLog  TaskDeadlineHistory[]
+
+  @@index([projectId])
+  @@index([assignedTo])
+  @@index([status])
+}
+
+model TaskDeadlineHistory {
+  id          String   @id @default(uuid())
+  taskId      String
+  oldDeadline DateTime
+  newDeadline DateTime
+  changedBy   String
+  changedAt   DateTime @default(now())
+
+  task    Task @relation(fields: [taskId], references: [id])
+  changer User @relation(fields: [changedBy], references: [id])
+
+  @@index([taskId])
+}
+
+model TaskComment {
+  id        String   @id @default(uuid())
+  taskId    String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([taskId])
+}
