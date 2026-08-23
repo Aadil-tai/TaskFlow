@@ -43,7 +43,11 @@ export async function loginUser(input: LoginInput) {
     },
   });
 
-  if (!user || !(await comparePassword(input.password, user.passwordHash))) {
+  if (
+    !user ||
+    user.deletedAt !== null ||
+    !(await comparePassword(input.password, user.passwordHash))
+  ) {
     throw new AppError("Invalid email or password", 401);
   }
 

@@ -37,6 +37,7 @@ model User {
   passwordHash String
   role         Role
   createdAt    DateTime @default(now())
+  deletedAt    DateTime?
 
   projectsCreated Project[]       @relation("ProjectCreator")
   memberships     ProjectMember[]
