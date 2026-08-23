@@ -1,8 +1,8 @@
 import { Role } from "../../../generated/prisma/enums.js";
 import { prisma } from "../../config/db.js";
 import { AppError } from "../../utils/AppError.js";
-import { hashPassword } from "../../utils/hash.js";
-import type { RegisterInput } from "./auth.schema.js";
+import { comparePassword, hashPassword } from "../../utils/hash.js";
+import type { LoginInput, RegisterInput } from "./auth.schema.js";
 
 export async function registerUser(input: RegisterInput) {
   const existingUser = await prisma.user.findUnique({
@@ -34,4 +34,24 @@ export async function registerUser(input: RegisterInput) {
   });
 
   return user;
+}
+
+export async function loginUser(input: LoginInput) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: input.email,
+    },
+  });
+
+  if (!user || !(await comparePassword(input.password, user.passwordHash))) {
+    throw new AppError("Invalid email or password", 401);
+  }
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    createdAt: user.createdAt,
+  };
 }
