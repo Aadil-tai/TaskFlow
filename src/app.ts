@@ -20,7 +20,11 @@ const app = express();
 
 app.use(
   cors({
-    origin: frontendUrl ? [frontendUrl] : true,
+    origin: [
+      "http://localhost:3000",
+      "https://task-flow-frontend-snowy-six.vercel.app",
+      ...(frontendUrl ? [frontendUrl] : [])
+    ],
     credentials: true,
   }),
 );
