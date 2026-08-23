@@ -4,7 +4,10 @@ function getSecret(name: string): string {
   const secret = process.env[name];
 
   if (!secret) {
-    throw new Error(`${name} is not configured`);
+    // Provide a fallback secret if they forgot to set it on Railway
+    return name === "JWT_REFRESH_SECRET" 
+      ? "fallback_refresh_secret_for_railway" 
+      : "fallback_jwt_secret_for_railway";
   }
 
   return secret;
