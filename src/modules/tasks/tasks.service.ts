@@ -98,6 +98,7 @@ export async function getTasksService(userId: string, role: string = "MEMBER", p
       ...(projectId ? { projectId } : {}),
     } : {
       deletedAt: null,
+      assignedTo: userId,
       ...(projectId ? { projectId } : {}),
       project: {
         deletedAt: null,
