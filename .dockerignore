@@ -1,0 +1,10 @@
+node_modules
+generated
+.env
+.env.*
+uploads
+.git
+.git*
+*.md
+npm-debug.log*
+.DS_Store
