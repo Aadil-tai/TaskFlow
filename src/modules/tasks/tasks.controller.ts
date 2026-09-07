@@ -4,6 +4,7 @@ import {
   createTaskService,
   getTaskDeadlineHistoryService,
   getTasksService,
+  getTaskService,
   softDeleteTaskService,
   updateTaskService,
   updateTaskStatusService,
@@ -43,6 +44,14 @@ export async function getTasks(req: Request, res: Response, next: NextFunction):
     const role = res.locals.user?.role || "MEMBER";
     const tasks = await getTasksService(getUserId(res), role, projectId);
     res.status(200).json({ tasks });
+  } catch (err) { next(err); }
+}
+
+export async function getTask(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const role = res.locals.user?.role || "MEMBER";
+    const task = await getTaskService(getTaskId(req), getUserId(res), role);
+    res.status(200).json({ task });
   } catch (err) { next(err); }
 }
 

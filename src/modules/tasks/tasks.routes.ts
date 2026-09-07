@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createTask,
+  getTask,
   getTaskDeadlineHistory,
   getTasks,
   softDeleteTask,
@@ -93,6 +94,31 @@ router.post("/tasks", authenticate, requireRole("ADMIN"), createTask);
  *                   items: { $ref: '#/components/schemas/Task' }
  */
 router.get("/tasks", authenticate, getTasks);
+
+/**
+ * @openapi
+ * /tasks/{id}:
+ *   get:
+ *     tags: [Tasks]
+ *     summary: Get a single task
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     responses:
+ *       200:
+ *         description: Task
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 task: { $ref: '#/components/schemas/Task' }
+ *       404:
+ *         description: Task not found
+ */
+router.get("/tasks/:id", authenticate, getTask);
 
 /**
  * @openapi

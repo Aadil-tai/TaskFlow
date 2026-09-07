@@ -113,6 +113,33 @@ export async function getTasksService(userId: string, role: string = "MEMBER", p
   });
 }
 
+export async function getTaskService(taskId: string, userId: string, role: string = "MEMBER") {
+  const task = await prisma.task.findFirst({
+    where: role === "ADMIN" ? {
+      id: taskId,
+      deletedAt: null,
+    } : {
+      id: taskId,
+      deletedAt: null,
+      assignedTo: userId,
+      project: {
+        deletedAt: null,
+        OR: [
+          { createdBy: userId },
+          { members: { some: { userId } } },
+        ],
+      },
+    },
+    select: taskSelect,
+  });
+
+  if (!task) {
+    throw new AppError("Task not found", 404);
+  }
+
+  return task;
+}
+
 export async function updateTaskService(taskId: string, input: UpdateTaskInput, userId: string) {
   const task = await ensureTaskExists(taskId);
   const access = await prisma.project.findFirst({
