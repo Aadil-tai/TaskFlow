@@ -57,11 +57,12 @@ export async function getProjectsService(userId: string, role: string = "MEMBER"
 
 export async function getProjectByIdService(projectId: string, userId: string, role: string = "MEMBER") {
   const project = await getAccessibleProject(projectId, userId, role);
+  const taskWhere = role === "ADMIN" ? { projectId, deletedAt: null } : { projectId, deletedAt: null, assignedTo: userId };
   const [totalTasks, todoTasks, inProgressTasks, completedTasks] = await Promise.all([
-    prisma.task.count({ where: { projectId, deletedAt: null } }),
-    prisma.task.count({ where: { projectId, deletedAt: null, status: "TODO" } }),
-    prisma.task.count({ where: { projectId, deletedAt: null, status: "IN_PROGRESS" } }),
-    prisma.task.count({ where: { projectId, deletedAt: null, status: "DONE" } }),
+    prisma.task.count({ where: taskWhere }),
+    prisma.task.count({ where: { ...taskWhere, status: "TODO" } }),
+    prisma.task.count({ where: { ...taskWhere, status: "IN_PROGRESS" } }),
+    prisma.task.count({ where: { ...taskWhere, status: "DONE" } }),
   ]);
 
   return {
